@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://bf6xql85wciv8"]
+
+[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_dt4hv"]
+[ext_resource type="Texture2D" uid="uid://cxvigh00pi6sl" path="res://Assets/RedSquare.png" id="1_hbfvm"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_c1whx"]
+friction = 0.2
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lt2ia"]
+size = Vector2(16, 16)
+
+[node name="Enemy" type="RigidBody2D"]
+collision_layer = 8
+collision_mask = 15
+mass = 0.07
+physics_material_override = SubResource("PhysicsMaterial_c1whx")
+max_contacts_reported = 5
+contact_monitor = true
+script = ExtResource("1_dt4hv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_hbfvm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_lt2ia")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

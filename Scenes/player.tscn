@@ -1,0 +1,181 @@
+[gd_scene load_steps=12 format=3 uid="uid://bv4k6r0r3h0b3"]
+
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_mo2jj"]
+[ext_resource type="Texture2D" uid="uid://odv0vcyaqkyy" path="res://Assets/BlueSquare.png" id="2_vcq25"]
+[ext_resource type="Script" path="res://Scripts/camera.gd" id="3_8g2ud"]
+[ext_resource type="PackedScene" uid="uid://ju56fxeaq5pc" path="res://Scenes/weapon.tscn" id="3_m7dma"]
+[ext_resource type="Texture2D" uid="uid://c86vcxy8st1mr" path="res://Assets/Jump.png" id="5_cll72"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_rsxmd"]
+friction = 0.5
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yyj31"]
+size = Vector2(16, 16)
+
+[sub_resource type="Animation" id="Animation_7lfj2"]
+resource_name = "Jump"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 0.8), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CollisionShape2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 0.8), Vector2(1, 1)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimationPlayer")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["RESET"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_yqm5x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CollisionShape2D:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_uhynl"]
+resource_name = "TakeDamage"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimationPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.8),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["RESET"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_awoi4"]
+_data = {
+"Jump": SubResource("Animation_7lfj2"),
+"RESET": SubResource("Animation_yqm5x"),
+"TakeDamage": SubResource("Animation_uhynl")
+}
+
+[node name="Player" type="RigidBody2D"]
+collision_layer = 2
+mass = 0.07
+physics_material_override = SubResource("PhysicsMaterial_rsxmd")
+max_contacts_reported = 5
+contact_monitor = true
+script = ExtResource("1_mo2jj")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(5, 5)
+position_smoothing_enabled = true
+script = ExtResource("3_8g2ud")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_vcq25")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_yyj31")
+
+[node name="Weapon" parent="." instance=ExtResource("3_m7dma")]
+
+[node name="DeathTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_awoi4")
+}
+
+[node name="JumpParticle" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+emitting = false
+lifetime = 0.3
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+texture = ExtResource("5_cll72")
+emission_shape = 4
+emission_points = PackedVector2Array(-7.5, 8, -3.5, 8, 4.5, 8, 7.5, 8)
+emission_colors = PackedColorArray()
+direction = Vector2(2.08165e-12, 1)
+spread = 0.0
+gravity = Vector2(2.08165e-12, 2.08165e-12)
+initial_velocity_min = 10.0
+initial_velocity_max = 10.0
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="DeathTimer" to="." method="_on_death_timer_timeout"]

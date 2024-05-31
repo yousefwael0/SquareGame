@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://b6d8eiad7iga8"]
+
+[ext_resource type="PackedScene" uid="uid://bv4k6r0r3h0b3" path="res://Scenes/player.tscn" id="1_epb20"]
+[ext_resource type="PackedScene" uid="uid://cd7t1ntu0cmfx" path="res://Scenes/ground.tscn" id="2_5gcod"]
+[ext_resource type="PackedScene" uid="uid://bf6xql85wciv8" path="res://Scenes/enemy.tscn" id="3_4mjv7"]
+[ext_resource type="PackedScene" uid="uid://cy58dg1tj4rt8" path="res://Scenes/killzone.tscn" id="4_760sl"]
+
+[sub_resource type="Environment" id="Environment_816ft"]
+background_mode = 3
+ambient_light_source = 1
+glow_enabled = true
+glow_intensity = 2.0
+glow_bloom = 0.2
+adjustment_enabled = true
+adjustment_contrast = 2.8
+adjustment_saturation = 1.5
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_p8sp0"]
+
+[node name="Game" type="Node2D"]
+
+[node name="Ground" parent="." instance=ExtResource("2_5gcod")]
+position = Vector2(1, 0)
+
+[node name="Player" parent="." instance=ExtResource("1_epb20")]
+position = Vector2(0, -81)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_816ft")
+
+[node name="Killzone" parent="." instance=ExtResource("4_760sl")]
+position = Vector2(0, 60)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+shape = SubResource("WorldBoundaryShape2D_p8sp0")
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="Enemy" parent="Enemies" instance=ExtResource("3_4mjv7")]
+position = Vector2(65, -84)
